@@ -136,6 +136,13 @@ ENV/
 env.bak/
 venv.bak/
 
+# data
+datasets/
+/datasets/
+
+# saved models
+/dfl/dfl_output/
+
 # Spyder project settings
 .spyderproject
 .spyproject
