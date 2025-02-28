@@ -20,7 +20,7 @@ COCO_NAMES_80 = [
 
 def generate_txt_for_subset(subset_dir, split='train2017'):
     """
-    遍历 subset_dir/images/<split> 目录下的图像文件，并将相对路径写入 txt 文件
+    遍历 subset_dir/images/<split> 目录下的图像文件, 并将相对路径写入 txt 文件
     例如:
       images/train2017/000000273650.jpg
       images/train2017/000000000139.jpg
@@ -38,7 +38,7 @@ def generate_txt_for_subset(subset_dir, split='train2017'):
         for fname in sorted(os.listdir(images_split_dir)):
             # 过滤出常见图像后缀
             if fname.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp')):
-                # 在 YOLOv5 中，如果 data.yaml 里配置了 `path: some_dir`
+                # 在 YOLOv5 中, 如果 data.yaml 里配置了 `path: some_dir`
                 # 则 train/val txt 里面的路径通常是相对于这个 `path`
                 # 常见做法是写成 "images/train2017/xxx.jpg"
                 rel_path = os.path.join('./images', split, fname)
@@ -116,7 +116,7 @@ def generate_yolo_data_for_coco_splits(
         subset_folder = os.path.join(base_splits_dir, f"subset_{subset_id}")
         
         if not os.path.isdir(subset_folder):
-            print(f"警告: 子集目录 {subset_folder} 不存在，跳过。")
+            print(f"警告: 子集目录 {subset_folder} 不存在, 跳过。")
             continue
         
         print(f"\n=== 处理 {subset_folder} ===")
@@ -126,9 +126,9 @@ def generate_yolo_data_for_coco_splits(
         val_txt_path = generate_txt_for_subset(subset_folder, 'val2017')
         
         # 生成 data.yaml
-        # 如果你想让 data.yaml 也放在 subset_i 下，可以这样:
+        # 如果你想让 data.yaml 也放在 subset_i 下, 可以这样:
         #   yaml_path = os.path.join(subset_folder, f"{prefix}{node_id}.yaml")
-        # 也可以存放到另一个目录，这里演示直接放到 subset 里
+        # 也可以存放到另一个目录, 这里演示直接放到 subset 里
         yaml_path = os.path.join(subset_folder, f"{prefix}{node_id}.yaml")
         
         generate_coco_subset_yaml(
@@ -141,7 +141,7 @@ def generate_yolo_data_for_coco_splits(
 
 if __name__ == "__main__":
     generate_yolo_data_for_coco_splits(
-        base_splits_dir='/mnt/data/dfodl/datasets/coco_split/',  # 你的 coco_splits 根目录
+        base_splits_dir='D:/git/dfodl/datasets/coco_split_test/',  # 你的 coco_splits 根目录
         num_subsets=10,                 # 你拆分了 10 份
         prefix="data_node",             # 生成的 data 文件前缀
         nc=80,                          # COCO 类别数

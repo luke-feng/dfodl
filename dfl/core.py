@@ -1,6 +1,10 @@
 import os
 import subprocess
 import torch
+import shutil
+import sys
+sys.path.append("d:/git/dfodl/")
+sys.path.append("d:/git/dfodl/yolov5")
 
 def train_local_yolov5(
     node_id: int,
@@ -36,7 +40,7 @@ def train_local_yolov5(
     # YOLOv5 command
     if base_model_path == None or base_model_path=='':
         command = [
-        "python", train_py,
+        "D:/git/dfodl/.venv/Scripts/python.exe", train_py,
         "--data", data_yaml,
         "--weights", base_model_path,  # "" => random init from scratch
         "--epochs", str(epochs),
@@ -50,11 +54,11 @@ def train_local_yolov5(
     else:
         
         command = [
-            "python", train_py,
+            "D:/git/dfodl/.venv/Scripts/python.exe", train_py,
             "--data", data_yaml,
             "--weights", base_model_path,  # "" => random init from scratch
             "--epochs", str(epochs),
-            "--batch-size", "32",
+            "--batch-size", "64",
             "--device", device_str,        # e.g. "0", "cuda:0", or "cpu"
             "--project", node_round_run_dir,
             "--name", "exp",
@@ -63,6 +67,7 @@ def train_local_yolov5(
         ]
     
     print(f"[Node {node_id}, Round {round_id}] Training on device {device_str}, base_model_path={repr(base_model_path)}")
+    print("command: ", command)
     subprocess.run(command, check=True)
 
     # YOLOv5 typically saves last.pt in node_round_run_dir/exp/weights/
@@ -72,7 +77,7 @@ def train_local_yolov5(
 
     # Rename it to a more descriptive name
     final_model_path = os.path.join(node_round_run_dir, f"model_round{round_id}_node{node_id}.pt")
-    os.rename(last_pt, final_model_path)
+    shutil.move(last_pt, final_model_path)
     
     print(f"[Node {node_id}, Round {round_id}] Finished training => {final_model_path}")
     return final_model_path
@@ -90,9 +95,7 @@ def load_weights_and_avg(model_paths, owner_idx=0):
     :param owner_idx: Index in 'model_paths' corresponding to the node's own model.
                      We'll use that checkpoint as the "owner" for non-(weight|bias) params.
     :return: aggregated_state_dict
-    """
-    import torch
-    
+    """   
     # 1) Load all models
     all_sd = []
     for mp in model_paths:
@@ -126,7 +129,6 @@ def load_weights_and_avg(model_paths, owner_idx=0):
             pass
     
     return base_sd
-
 
 def save_averaged_weights(avg_state_dict, ref_model_path, out_path):
     """
@@ -244,14 +246,14 @@ if __name__ == "__main__":
     # and you want to train on an NVIDIA T4 GPU (device 0).
     
     run_decentralized_fedavg(
-        subsets_dir="/mnt/data/dfodl/datasets/coco_split/",
+        subsets_dir="D:/git/dfodl/datasets/coco_split/",
         num_nodes=10,
-        rounds=2,
-        local_epochs=1,
+        rounds=10,
+        local_epochs=10,
         from_scratch_first_round=True,      # Round 0 => random init
         init_model=None,                    # Not used since from_scratch_first_round=True
         output_dir="dfl_output",
         topology=None,                      # ring by default
-        yolov5_dir="/mnt/data/dfodl/yolov5",
+        yolov5_dir="D:/git/dfodl/yolov5",
         device_str="0"                      # T4 typically at device "0"
     )
