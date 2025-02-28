@@ -142,7 +142,8 @@ datasets/
 
 # saved models
 /dfl/dfl_output/
-
+/dfl_output/
+dfl_output/
 # Spyder project settings
 .spyderproject
 .spyproject
